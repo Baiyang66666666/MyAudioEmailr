@@ -1,0 +1,32 @@
+html{
+    height: 100%;
+}
+body {
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+}
+.banner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #FFFFFF;
+    height: 95px;
+    width: 100%;
+    font-family: "Futura", "Avant Garde", sans-serif;
+    font-size: 80px;
+}
+.list-group{
+    width: fit-content;
+    margin-top: 17%;
+    margin-left: 43%;
+}
+
+/*#select-page-btns{*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    margin-top: 20px;*/
+/*}*/

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{/javascript/jquery.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/stylesheet/setting.css}">
+    <title>Settings</title>
+</head>
+
+<script>
+    function resetForm() {
+        document.getElementById("voiceType").selectedIndex = 0;
+        document.getElementById("scheduleTime").value = null;
+    }
+
+    function saveSetting() {
+        var form = $('#settingForm');
+        $.ajax({
+            type: form.attr('method'),
+            url: form.attr('action'),
+            data: form.serialize(),
+            success: function (data) {
+                alert("save success！");
+            },
+            error: function () {
+                alert("save failed！");
+            }
+        });
+    }
+
+    function showModal() {
+        var modal = document.getElementById("writeEmail");
+        modal.style.display = "block";
+    }
+
+    function closeModal() {
+        var modal = document.getElementById("writeEmail");
+        modal.style.display = "none";
+    }
+</script>
+<body class="p-3 m-0 border-0 bd-example">
+<div class="banner" id="banner">
+    MyAudioEmail
+</div>
+
+<div class="main">
+    <div class="sidebar-background">
+    </div>
+    <div th:insert="components/sideBarCmpt"></div>
+    <div class="content-background">
+    </div>
+
+    <div class="content-content">
+        <div>
+            <div class="header" th:text="'Welcome, ' + ${accountInfo.username} +'!'">Settings</div>
+            <div th:fragment="content">
+                <div class="container-fluid">
+                    <form id="settingForm" name="settingForm"
+                          action="../setting/addOrUpdate" method="post" th:object="${settingDto}">
+                        <div class="row mb-3" style="display: none">
+                            <label class="col-sm-2 col-form-label">userId</label>
+                            <div class="col-sm-3">
+                                <input class="form-control" id="userId" name="userId" readonly th:value="${settingDto.userId}" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">userName</label>
+                            <div class="col-sm-3">
+                                <input class="form-control" id="userName" name="userName" readonly th:value="${settingDto.userName}" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">Email address</label>
+                            <div class="col-sm-3">
+                                <input class="form-control" id="address" name="address" th:value="${settingDto.address}" readonly>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">Voice Type</label>
+                            <div class="col-sm-3">
+                                <select class="form-select" aria-label="Default select example" id="voiceType" name = "voiceType" th:field="${settingDto.voiceType}" required>
+                                    <option value="com.au" th:selected="${settingDto.voiceType == 'com.au'}">English (Australia)</option>
+                                    <option value="co.uk" th:selected="${settingDto.voiceType == 'co.uk'}">English (United Kingdom)</option>
+                                    <option value="us" th:selected="${settingDto.voiceType == 'us'}">English (United States)</option>
+                                    <option value="ca" th:selected="${settingDto.voiceType == 'ca'}">English (Canada)</option>
+                                    <option value="co.in" th:selected="${settingDto.voiceType == 'co.in'}">English (India)</option>
+                                    <option value="ie" th:selected="${settingDto.voiceType == 'ie'}">English (Ireland)</option>
+                                    <option value="co.za" th:selected="${settingDto.voiceType == 'co.za'}">English (South Africa)</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">Schedule Time</label>
+                            <div class="col-sm-3">
+                                <input type="time" class="form-control" id="scheduleTime" name="scheduleTime" th:value="${settingDto.scheduleTime}">
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-primary" style="margin-left: 25%" onclick="saveSetting()">save</button>
+                        <button type="button" id = "reset" name = "reset"  onclick ="resetForm()"class="btn btn-outline-primary">Reset</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="writeEmail" class="modal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                onclick="closeModal()"></button>
+                    </div>
+                    <form>
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label class="col-form-label">To:</label>
+                                <input type="text" name="to_user" class="form-control" id="to_user" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="col-form-label">Subject:</label>
+                                <input type="text" name="subject" class="form-control" id="subject" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="col-form-label">Message:</label>
+                                <textarea name="content" class="form-control" id="content" required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    onclick="closeModal()">
+                                Close
+                            </button>
+                            <button type="submit" onclick="sendEmail()" class="btn btn-primary">Send message</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

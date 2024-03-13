@@ -1,0 +1,29 @@
+<div class="sidebar-content">
+    <div class="account">
+        <label class="acct_name" style="font-size: 25px" th:text="${accountInfo.username}"></label>
+        <label class="acct-tag" style="font-size: 20px">
+            <th:block th:if="${accountInfo.accountType=='1'}">
+                <td>Personal</td>
+            </th:block>
+            <th:block th:if="${accountInfo.accountType!='1'}">
+                <td>Work</td>
+            </th:block>
+        </label>
+    </div>
+    <hr>
+    <ul class="navbar-nav" style="width: 100%">
+        <li class="nav-item">
+            <a class="nav-link" href="/audioEmail/inbox/email">Inbox</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" onclick="showModal()">Write Message</a>
+        </li>
+        <hr>
+        <li class="nav-item">
+            <a class="nav-link" href='/audioEmail/setting/basicSetting' onclick="createSocket()">Settings</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/audioEmail/login/setAccount">Logout</a>
+        </li>
+    </ul>
+</div>

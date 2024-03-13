@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" th:href="@{/stylesheet/emailBox.css}">
+    <title>Inbox</title>
+    <script type="text/javascript" th:src="@{/javascript/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/javascript/socket.js}"></script>
+</head>
+
+<body class="p-3 m-0 border-0 bd-example">
+<div id="website-title" th:value="${accountInfo.userId}"></div>
+<div class="banner" id="banner">
+    MyAudioEmail
+</div>
+
+<div class="main">
+    <div class="sidebar-background"></div>
+
+    <div th:insert="components/sideBarCmpt"></div>
+
+    <div class="content-background">
+
+    </div>
+    <div class="content-content">
+        <div class = "mail-info">
+            <div class="header" th:text="'Welcome, ' + ${accountInfo.username} +'!'">Email List</div>
+
+            <div id="button-row">
+                <div class="align-left">
+                    <button class="btn btn-primary mr-2" onclick="readSpecificMails()">Read Specific</button>
+                    <button class="btn btn-primary mr-2" onclick="readAllUnreadEmails()">Read All Unread</button>
+                    <button class="btn btn-danger" onclick="deleteEmails()">Delete</button>
+                </div>
+                <div class="align-right">
+                    <button class="btn btn-primary mr-2" onclick="syncWithServer()">Sync</button>
+                </div>
+            </div>
+
+            <div id="mail-list">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>
+                            <input id="recordCheckAll" type="checkbox" name="recordCheckAll"/>
+                        </th>
+                        <th scope="col" width="170px">Sender</th>
+                        <th scope="col" width="100%">Subject</th>
+                        <th scope="col" width="30px">Status</th>
+                        <th scope="col" width="30px">Operation</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="email : ${receiveList}">
+                        <td><input th:id="${email.mail_id}" name="checkItem"
+                                   type="checkbox" th:value="${email.mail_id}"></input></td>
+                        <td th:text="${email.from_user}"></td>
+                        <td th:text="${email.subject}"></td>
+                        <th:block th:if="${email.read_flag=='1'}">
+                            <td>read</td>
+                        </th:block>
+                        <th:block th:if="${email.read_flag!='1'}">
+                            <td>unread</td>
+                        </th:block>
+                        <td>
+                            <button class="btn btn-outline-primary" onclick="showReadEmailModal(this)">Read</button>
+                            <button class="btn btn-outline-primary" onclick="jumpToDetail(this)">Detail</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="writeEmail" class="modal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                onclick="closeModal()"></button>
+                    </div>
+                    <form>
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label class="col-form-label">To:</label>
+                                <input type="text" name="to_user" class="form-control" id="to_user" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="col-form-label">Subject:</label>
+                                <input type="text" name="subject" class="form-control" id="subject" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="col-form-label">Message:</label>
+                                <textarea name="content" class="form-control" id="content" required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    onclick="closeModal()">
+                                Close
+                            </button>
+                            <button type="submit" onclick="sendEmail()" class="btn btn-primary">Send message</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="readEmail" class="modal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">ReadEmail</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                onclick="closeReadEmailModal()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <audio id="readAudio" src="" controls></audio>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                onclick="closeReadEmailModal()">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="readScheduledMails" class="modal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">ReadEmail</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                onclick="closeReadEmailModal()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <audio id="readScheduledAudio" src="" controls onended="playNext()"></audio>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                onclick="closeReadEmailModal()">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
+
+<script>
+    let user_id = document.getElementById("website-title").getAttribute("value")
+    let socket = createSocket(user_id)
+    // The list now is reading
+    let readingList = []
+    // The list to save the newList ( Because mails are sent one by one)
+    let resourceList = [];
+    let audioIndex = 0;
+    let isFirstMsg = true;
+    let isFinished = false;
+    socket.onmessage = function (event) {
+        console.log(event)
+        let audio = document.getElementById("readScheduledAudio");
+        let json = JSON.parse(event.data)
+        resourceList = json.path
+        console.log("ReceiveMsg" + json.path)
+        if (audioIndex === 0 && isFirstMsg){
+            isFirstMsg = false
+            readingList = resourceList
+            let modal = document.getElementById("readScheduledMails");
+            modal.style.display = "block";
+            document.getElementById("readScheduledAudio").src = readingList[audioIndex]
+        }else if (audio.paused && isFinished){
+            isFinished = false
+            audioIndex++
+            readingList = resourceList
+            document.getElementById("readScheduledAudio").src = readingList[audioIndex]
+            audio.play();
+        }
+
+    }
+
+
+    socket.addEventListener('error', function (event) {
+        console.error('WebSocket 连接发生错误！', event);
+    });
+
+    function playNext() {
+        let audio = document.getElementById("readScheduledAudio");
+        if (audioIndex+1 == resourceList.length) {
+            isFinished = true
+            // audioIndex = 0;
+            // audio.src = resourceList[0];
+            audio.src = readingList[audioIndex];
+            audio.pause()
+        } else {
+            audioIndex++
+            readingList = resourceList
+            audio.src = readingList[audioIndex];
+            audio.play();
+        }
+    }
+
+    function readSpecificMails() {
+        var emailIds = getCheckedItems();
+        console.log(emailIds);
+        if (emailIds.length === 0) {
+            alert("Please check the emails that need to be read!");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/audioEmail/tts/read",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(emailIds),
+            success: function () {
+                console.log("Success")
+            },
+            error: function () {
+                alert("Read failure");
+            }
+        })
+    }
+
+
+    function sendSchedule() {
+        const message = {
+            destination: '/audioEmail/schedule/' + user_id,
+            body: JSON.stringify("123456")
+        }
+        socket.send(JSON.stringify(message))
+        console.log("Send msg:" + message)
+    }
+
+    function showModal() {
+        var modal = document.getElementById("writeEmail");
+        modal.style.display = "block";
+    }
+
+    function closeModal() {
+        var modal = document.getElementById("writeEmail");
+        modal.style.display = "none";
+    }
+
+    function getParentRow(element) {
+        console.log("Element:", element);
+        if (!element || element.tagName !== "BUTTON") {
+            console.error("Invalid element parameter:", element);
+            return null;
+        }
+        var row = element.closest("tr");
+        console.log("Row:", row);
+        return row;
+    }
+
+    function showReadEmailModal(element) {
+        var row = getParentRow(element);
+        console.log("Row:", row);
+        var input = row.querySelector("input[name='checkItem']");
+        console.log("Input:", input);
+        var mailId = input ? input.value : null;
+        console.log("Mail ID:", mailId);
+
+        var row = getParentRow(element);
+        var mailId = row.querySelector("input[name='checkItem']").value;
+        $.ajax({
+            type: "POST",
+            url: "/audioEmail/tts/getVoice",
+            async: false,
+            data: {
+                "emailId": mailId
+            },
+            success: function (data) {
+                var modal = document.getElementById("readEmail");
+                modal.style.display = "block";
+                console.log("Response data:", data);
+                document.getElementById("readAudio").src = data;
+            },
+            error: function () {
+                alert("Fail to read this message")
+                console.log("error")
+            }
+        })
+        // var modal = document.getElementById("readEmail");
+        // modal.style.display = "block";
+        // document.getElementById("readAudio").src="/audioEmail/audio/test123.wav";
+
+    }
+
+    function jumpToDetail(element) {
+        var row = getParentRow(element);
+        var input = row.querySelector("input[name='checkItem']");
+        var mailId = input ? input.value : null;
+        var row = getParentRow(element);
+        var mailId = row.querySelector("input[name='checkItem']").value;
+        console.log(mailId)
+        window.location.href = '/audioEmail/inbox/showDetail?mailId=' + mailId;
+    }
+
+    function closeReadEmailModal() {
+        var modal = document.getElementById("readEmail");
+        var modal_scheduled = document.getElementById("readScheduledMails");
+        modal_scheduled.style.display = "none";
+        modal.style.display = "none";
+        let audio = document.getElementById("readScheduledAudio")
+        audio.pause()
+        window.location.reload()
+    }
+
+    function sendEmail() {
+        var to_user = document.getElementById("to_user").value;
+        console.log(to_user)
+        var subject = document.getElementById("subject").value;
+        console.log(subject)
+        var content = document.getElementById("content").value;
+        console.log(content)
+        $.ajax({
+            type: "POST",
+            url: "/audioEmail/tts/send",
+            async: false,
+            data: {
+                "to_user": to_user,
+                "subject": subject,
+                "content": content
+            },
+            success: function () {
+                alert("send success");
+                var modal = document.getElementById("writeEmail");
+                modal.style.display = "none";
+            },
+            error: function () {
+                alert("Send failure");
+                console.log("error")
+            }
+        })
+    }
+
+    function syncWithServer() {
+        $.ajax({
+            type: "GET",
+            url: "/audioEmail/inbox/sync",
+            async: false,
+            success: function () {
+                console.log("Sync Success");
+                location.reload();
+            },
+            error: function () {
+                console.log("Sync Fail");
+            }
+        })
+    }
+    // 获取全选checkbox和所有的选择checkbox
+    var checkAll = document.getElementById("recordCheckAll");
+    var checkItems = document.getElementsByName("checkItem");
+
+    // 给全选checkbox添加点击事件
+    checkAll.onclick = function () {
+        for (var i = 0; i < checkItems.length; i++) {
+            checkItems[i].checked = checkAll.checked;
+        }
+    };
+
+    function readEmails() {
+        var checkedItems = getCheckedItems();
+        console.log(checkedItems);
+    }
+
+    function readAllUnreadEmails() {
+        $.ajax({
+            type: "POST",
+            url: "/audioEmail/tts/unread",
+            contentType: "application/json;charset=UTF-8",
+            success: function () {
+
+            },
+            error: function () {
+                alert("Read failure");
+            }
+        })
+
+    }
+
+
+    function deleteEmails() {
+        var emailIds = getCheckedItems();
+        console.log(emailIds);
+        if (emailIds.length === 0) {
+            alert("Please check the emails that need to be deleted!");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/audioEmail/inbox/delete",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(emailIds),
+            success: function () {
+                alert("delete success");
+                location.reload(); // 刷新页面
+            },
+            error: function () {
+                alert("delete failure");
+            }
+        })
+    }
+
+    function getCheckedItems() {
+        var checkedItems = [];
+        var checkItems = document.getElementsByName("checkItem");
+        for (var i = 0; i < checkItems.length; i++) {
+            if (checkItems[i].checked) {
+                checkedItems.push(checkItems[i].value);
+            }
+        }
+        return checkedItems;
+    }
+</script>

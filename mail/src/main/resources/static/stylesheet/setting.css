@@ -1,0 +1,108 @@
+html {
+    height: 100%;
+    /*margin:0;*/
+    /*padding:0;*/
+    /*max-height:100vh;*/
+    overflow: hidden;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+}
+
+.banner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #FFFFFF;
+    height: 50px;
+    width: 100%;
+    font-family: "Futura", "Avant Garde", sans-serif;
+    font-size: 40px;
+}
+
+.sidebar-background {
+    width: 180px;
+    position: fixed;
+    z-index: -10;
+    top: 65px;
+    left: 15px;
+    bottom: 15px;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, .8);
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+.sidebar-content {
+    width: 180px;
+    position: fixed;
+    z-index: 10;
+    top: 10px;
+    left: 15px;
+    padding: 55px 15px 15px 15px;
+    text-align: left;
+    font-family: "Quicksand", "Helvetica Neue", "Helvetica", sans-serif;
+    font-size: 20px;
+}
+
+.content-background {
+    width: auto;
+    position: fixed;
+    z-index: -10;
+    top: 65px;
+    left: 210px;
+    right: 15px;
+    bottom: 15px;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, .8);
+    overflow-x: hidden;
+}
+
+.content-content {
+    position: fixed;
+    z-index: 10;
+    top: 10px;
+    left: 210px;
+    right: 15px;
+    bottom: 15px;
+    padding: 55px 15px 15px 15px;
+    text-align: left;
+    font-family: "Quicksand", "Helvetica Neue", "Helvetica", sans-serif;
+    font-size: 20px;
+}
+
+.account {
+    padding: 10px 0px 10px 0px;
+    font-family: "Futura", "Avant Garde", sans-serif;
+    color: #383B4B;
+}
+
+ul li a {
+    cursor: pointer;
+}
+
+.header {
+    font-family: "Futura", "Avant Garde", sans-serif;
+    font-size: 60px;
+    color: #383B4B;
+}
+
+.settingMain {
+    position: fixed;
+    z-index: 10;
+    padding: 15px 15px 15px 15px;
+}
+
+td {
+    margin: 50px 0;
+}
+
+.container-fluid {
+    width: 60%;
+    margin-top: 5%;
+    margin-left: 5%;
+}
