@@ -1,9 +1,6 @@
 # README
-
-This is the branch of doc. It is used to store the documents organized during the development process.
-
-For other team-related documents, please refer to [Google Drive](https://drive.google.com/drive/folders/1L_B7ax4ZjqrkdyzbJagLgAt-GhVxp-QS?usp=sharing)
-
+MyAudioEmailr is an application dedicated to providing enhanced convenience in email reading for individuals with busy work schedules by converting emails into speech. 
+Techniques:Python, Git, Java, SQL, Javascript, great teamwork！！
 
 ## AudioEmail Configuration
 
